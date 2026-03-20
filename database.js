@@ -72,8 +72,15 @@ const criarBanco = async () => {
     await db.run(`DELETE FROM incidentes WHERE status = 'Resolvido'`);
     console.log('Incidentes com status "Resolvido" foram removidos da tabela.');
     console.log(todosIncidentes);
+
+    //Select Final - Consulta os dados da tabela após as operações de UPDATE e DELETE
+    const resultadoFinal = await db.all(`SELECT * FROM incidentes`);
+    console.log(resultadoFinal);
     
+    return db; // A função criarBanco agora entrega a chave de acesso ao banco de dados para outras partes do código, se necessário.
 
 }   
 
-criarBanco();
+//O module.exports cria uma 'ponte' que permite que outras partes do código acessem a função criarBanco, facilitando a reutilização e organização do código.
+//Nesse caso, ele exporta a função criarBanco, permitindo que seja importada e utilizada em outros arquivos do projeto, para estabelecer a conexão com o banco de dados e realizar operações relacionadas aos incidentes urbanos.
+module.exports = {criarBanco};
