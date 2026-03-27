@@ -34,8 +34,8 @@ app.get('/incidentes', async (req, res) => {
 //Get incidente específico - Ler um incidente específico pelo ID
 app.get('/incidentes/:id', async (req, res) => {
     const db = await criarBanco();
-    const id = req.params.id;
-    const incidenteId = await db.get(`SELECT * FROM incidentes WHERE id = ?`, [id]);
+    const { id } = req.params;
+    const incidenteId = await db.all(`SELECT * FROM incidentes WHERE id = ?`, [id]);
     res.json(incidenteId); 
 })
 
@@ -48,7 +48,30 @@ app.post('/incidentes', async (req, res)=> {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
         [tipo_problema, localizacao, descricao, prioridade, nome_solicitante, data_registro, hora_registro, imagem_problema]
     );
-    res.json({message: 'Incidente criado com sucesso'});
+    res.send(`Incidente de ${tipo_problema} registrado com sucesso!`);
 })
 
-//UPTADE incidente - Atualizar um incidente específico
+//PUT incidente - Atualizar um incidente específico
+app.put('/incidentes/:id', async (req, res) => {
+    const db = await criarBanco();
+    const { id } = req.params;
+
+    const {tipo_problema, localizacao, descricao, prioridade, nome_solicitante, data_registro, hora_registro, imagem_problema} = req.body;
+
+    await db.run(`
+        UPDATE incidentes
+        SET tipo_problema = ?, localizacao = ?, descricao = ?, prioridade = ?, nome_solicitante = ?, data_registro = ?, hora_registro = ?, imagem_problema = ?
+        WHERE id = ?`, 
+        [tipo_problema, localizacao, descricao, prioridade, nome_solicitante, data_registro, hora_registro, imagem_problema, id]
+    );
+    res.send(`Incidente de id ${id} atualizado com sucesso!`);
+})
+
+//Delete incidente - Deletar um incidente específico
+app.delete('/incidentes/:id', async (req, res) => {
+    const db = await criarBanco();
+    const { id } = req.params;
+    await db.run(`DELETE FROM incidentes WHERE id = ?`, [id]);
+    res.send(`Incidente de id ${id} deletado com sucesso`);
+})
+
