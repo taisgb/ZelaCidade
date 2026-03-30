@@ -1,8 +1,9 @@
 const express = require('express');
 const { criarBanco }  = require('./database');
+const cors = require('cors');
 
 const app =  express();
-
+app.use(cors());
 app.use(express.json());
 
 //Rota para obter todos os incidentes
@@ -15,12 +16,6 @@ app.get('/', (req, res) => {
         </body>        
         `)
 } )
-
-const PORT = 3000;
-
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta http://localhost:${PORT}`);
-})
 
 //Rotas incidentes - CRUD
 
@@ -73,5 +68,12 @@ app.delete('/incidentes/:id', async (req, res) => {
     const { id } = req.params;
     await db.run(`DELETE FROM incidentes WHERE id = ?`, [id]);
     res.send(`Incidente de id ${id} deletado com sucesso`);
+})
+
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta http://localhost:${PORT}`);
 })
 
